@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT ||3000 ;
 
 app.get("/", (req, res) => {
-res.send("DevSecOps application is running successfully directly from github ! Version-2 ");
+res.send("Conflict.  running successfully directly from github ! Version-2 ");
 });
 
 app.get("/health", (req, res) => {
