@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -18,6 +17,16 @@ pipeline {
             steps {
                 echo '===== Running automated tests ====='
                 sh 'npm test'
+            }
+        }
+
+        stage('Docker Check') {
+            steps {
+                echo '===== Checking Docker version ====='
+                sh 'docker --version'
+
+                echo '===== Checking Docker engine access ====='
+                sh 'docker info'
             }
         }
     }
