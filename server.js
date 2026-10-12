@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-    res.send("DevSecOps CI/CD Pipeline - Automated Trigger Test");
+    res.send("DevSecOpssssssss CI/CD Pipeline - Automated Trigger Test");
 });
 
 app.get("/health", (req, res) => {
