@@ -29,5 +29,13 @@ pipeline {
                 sh 'docker info'
             }
         }
+
+
+        stage('Docker Build') {
+            steps {
+                echo '===== Building Docker image ====='
+                sh 'docker build -t devsecops-app:latest .'
+                }
+            }
     }
 }
