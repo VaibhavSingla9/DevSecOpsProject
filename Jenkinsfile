@@ -20,6 +20,14 @@ pipeline {
             }
         }
 
+
+        stage('Dependency Security Scan') {
+            steps {
+                echo '===== Scanning dependencies for vulnerabilities ====='
+                sh 'npm audit'
+                }
+            }
+
         stage('Docker Check') {
             steps {
                 echo '===== Checking Docker version ====='
