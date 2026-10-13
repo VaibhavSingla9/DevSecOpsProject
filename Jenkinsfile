@@ -38,7 +38,7 @@ pipeline {
                         variable: 'SONAR_TOKEN'
                         )
                         ]) {
-                    sh 'sonar-scanner -Dsonar.token="$SONAR_TOKEN"'
+                    sh 'sonar-scanner -Dsonar.token="$SONAR_TOKEN" -Dsonar.qualitygate.wait=true'
                     }
                 }
             }
