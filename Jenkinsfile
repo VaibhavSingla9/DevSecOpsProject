@@ -28,6 +28,21 @@ pipeline {
                 }
             }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo '===== Running SonarQube analysis ====='
+                
+                withCredentials([
+                    string(
+                        credentialsId: 'sonarqube-token',
+                        variable: 'SONAR_TOKEN'
+                        )
+                        ]) {
+                    sh 'sonar-scanner -Dsonar.token="$SONAR_TOKEN"'
+                    }
+                }
+            }
+
         stage('Docker Check') {
             steps {
                 echo '===== Checking Docker version ====='
