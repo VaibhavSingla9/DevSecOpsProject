@@ -57,7 +57,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo '===== Building Docker image ====='
-                sh 'docker build -t devsecops-app:latest .'
+                sh 'docker buildx build --platform linux/amd64 --load -t devsecops-app:latest .'
                 }
             }
 
