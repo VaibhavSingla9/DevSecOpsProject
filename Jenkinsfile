@@ -89,5 +89,33 @@ pipeline {
         }
     }
 }
+
+
+
+stage('EC2 Connection Test') {
+    steps {
+        echo '===== Testing SSH connection to EC2 ====='
+
+        withCredentials([
+            sshUserPrivateKey(
+                credentialsId: 'ec2-ssh-key',
+                keyFileVariable: 'SSH_KEY',
+                usernameVariable: 'EC2_USER'
+            ),
+            string(
+                credentialsId: 'ec2-public-ip',
+                variable: 'EC2_HOST'
+            )
+        ]) {
+            sh '''
+                ssh -i "$SSH_KEY" \
+                    -o StrictHostKeyChecking=accept-new \
+                    -o ConnectTimeout=10 \
+                    "$EC2_USER@$EC2_HOST" \
+                    'hostname && sudo docker --version'
+            '''
+        }
+    }
+}
     }
 }
