@@ -92,9 +92,9 @@ pipeline {
 
 
 
-stage('EC2 Connection Test') {
+stage('Deploy to EC2') {
     steps {
-        echo '===== Testing SSH connection to EC2 ====='
+        echo '===== Deploying application to EC2 ====='
 
         withCredentials([
             sshUserPrivateKey(
@@ -111,8 +111,33 @@ stage('EC2 Connection Test') {
                 ssh -i "$SSH_KEY" \
                     -o StrictHostKeyChecking=accept-new \
                     -o ConnectTimeout=10 \
-                    "$EC2_USER@$EC2_HOST" \
-                    'hostname && sudo docker --version'
+                    "$EC2_USER@$EC2_HOST" '
+                        set -e
+
+                        echo "===== Stopping the old systemd service ====="
+                        sudo systemctl disable --now devsecops-app 2>/dev/null || true
+
+                        echo "===== Pulling the latest Docker image ====="
+                        sudo docker pull vaibhavsingla456/devsecops-app:latest
+
+                        echo "===== Removing the previous container ====="
+                        sudo docker rm -f devsecops-container 2>/dev/null || true
+
+                        echo "===== Starting the updated container ====="
+                        sudo docker run -d \
+                            --name devsecops-container \
+                            --restart unless-stopped \
+                            -p 3000:3000 \
+                            vaibhavsingla456/devsecops-app:latest
+
+                        sleep 3
+
+                        echo "===== Checking container status ====="
+                        sudo docker ps --filter name=devsecops-container
+
+                        echo "===== Checking application health ====="
+                        curl -fsS http://localhost:3000/health
+                    '
             '''
         }
     }
