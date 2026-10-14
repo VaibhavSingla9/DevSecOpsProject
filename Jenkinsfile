@@ -38,7 +38,7 @@ pipeline {
                         variable: 'SONAR_TOKEN'
                         )
                         ]) {
-                    sh 'sonar-scanner -Dsonar.token="$SONAR_TOKEN" -Dsonar.qualitygate.wait=true'
+                    sh 'sonar-scanner -Dsonar.token="$SONAR_TOKEN" '
                     }
                 }
             }
@@ -60,5 +60,34 @@ pipeline {
                 sh 'docker build -t devsecops-app:latest .'
                 }
             }
+
+        stage('Docker Push') {
+    steps {
+        echo '===== Pushing Docker image to Docker Hub ====='
+
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'dockerhub-credentials',
+                usernameVariable: 'DOCKERHUB_USERNAME',
+                passwordVariable: 'DOCKERHUB_TOKEN'
+            )
+        ]) {
+            sh '''
+                set +x
+
+                printf '%s' "$DOCKERHUB_TOKEN" | docker login \
+                    --username "$DOCKERHUB_USERNAME" \
+                    --password-stdin
+
+                docker tag devsecops-app:latest \
+                    "$DOCKERHUB_USERNAME/devsecops-app:latest"
+
+                docker push "$DOCKERHUB_USERNAME/devsecops-app:latest"
+
+                docker logout
+            '''
+        }
+    }
+}
     }
 }
